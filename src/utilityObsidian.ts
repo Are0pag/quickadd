@@ -844,7 +844,7 @@ export async function openFile(
 			leaf = app.workspace.getLeftLeaf(true);
 			break;
 		case "right-sidebar":
-			leaf = app.workspace.getRightLeaf(true);
+			leaf = app.workspace.getRightLeaf(false);
 			break;
 		default:
 			leaf = app.workspace.getLeaf("tab");
@@ -880,6 +880,21 @@ export async function openFile(
 
 	if (focus) {
 		app.workspace.setActiveLeaf(leaf, { focus: true });
+
+		//Проверяем, является ли текущий вид заметкой (Markdown)
+		if (leaf.view instanceof MarkdownView) {
+			const editor = leaf.view.editor; // В MarkdownView свойство editor доступно напрямую
+
+			const lineCount = editor.lineCount();
+			const lastLineIndex = lineCount - 1;
+			const lastLineLength = editor.getLine(lastLineIndex).length;
+
+			// Устанавливаем курсор в самый конец
+			editor.setCursor({
+				line: lastLineIndex,
+				ch: lastLineLength
+			});
+		}
 	}
 
 	return leaf;
