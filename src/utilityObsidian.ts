@@ -844,6 +844,11 @@ export async function openFile(
 			leaf = app.workspace.getLeftLeaf(true);
 			break;
 		case "right-sidebar":
+			const existingLeaf = app.workspace.getLeavesOfType('markdown')
+				.find(l => l.getRoot() === app.workspace.rightSplit);
+			if (existingLeaf) {
+				existingLeaf.detach(); // 2. Если нашли — закрываем (удаляем из DOM и памяти)
+			}
 			leaf = app.workspace.getRightLeaf(false);
 			break;
 		default:
